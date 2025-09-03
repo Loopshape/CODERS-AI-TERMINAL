@@ -1,0 +1,123 @@
+.window {
+    width: 95vw;
+    height: 90vh;
+    max-width: 1600px;
+    background: var(--glass-bg) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 0 10px rgba(0,255,156,.3),0 0 20px rgba(0,255,156,.2),0 0 30px rgba(0,255,156,.1),inset 0 0 5px rgba(0,255,156,.2) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    display: grid;
+    grid-template-columns: 250px 1fr 350px;
+    grid-template-rows: 40px 300px 1fr;
+    grid-template-areas:
+        "titlebar titlebar titlebar"
+        "sidebar visual visual"
+        "sidebar main log";
+    overflow: hidden !important;
+    resize: both;
+    animation: fadeIn .5s ease-out !important;
+}
+
+@keyframes fadeIn{
+    from{ opacity:0 !important; transform:scale(.95) !important; }
+    to{ opacity:1 !important; transform:scale(1) !important; }
+}
+
+.title-bar {
+    grid-area: titlebar;
+    display: flex !important;
+    align-items: center !important;
+    padding: .5rem 1rem !important;
+    background: linear-gradient(to bottom,rgba(255,255,255,.1),rgba(255,255,255,.05)) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    cursor: move;
+}
+
+#visual-panel {
+    grid-area: visual;
+}
+
+#sidebar {
+    grid-area: sidebar;
+    background: rgba(0,0,0,0.2);
+    border-right: 1px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+#main-content {
+    grid-area: main;
+    padding: 20px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+}
+
+#log-panel {
+    grid-area: log;
+    background: rgba(0,0,0,0.2);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .window {
+         grid-template-columns: 220px 1fr;
+         grid-template-rows: 40px 250px 1fr 200px;
+         grid-template-areas:
+            "titlebar titlebar"
+            "visual visual"
+            "sidebar main"
+            "sidebar log";
+    }
+    #visual-panel {
+        border-right: none;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0 !important;
+    }
+    .window {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0 !important;
+        border: none !important;
+        grid-template-columns: 1fr;
+        grid-template-rows: 40px auto 250px 1fr 200px;
+        grid-template-areas:
+            "titlebar"
+            "sidebar"
+            "visual"
+            "main"
+            "log";
+    }
+    #sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 8px;
+        white-space: nowrap;
+    }
+    #main-content {
+        padding: 15px;
+    }
+    #log-panel {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+    }
+     #visual-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+}

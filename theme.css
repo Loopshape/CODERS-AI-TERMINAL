@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+:root {
+    /* Theme Colors */
+    --bg-color-dark: #000;
+    --bg-color-medium: rgba(10, 25, 47, 0.85);
+    --bg-color-light: rgba(255, 255, 255, 0.05);
+    --border-color: #00ff9c;
+    --glass-bg: rgba(10, 25, 47, 0.85); /* For window background */
+
+    --text-color-primary: #e0e0e0;
+    --text-color-secondary: #a7a7a7; /* A slightly darker gray for secondary text */
+    --font-primary: 'Roboto Mono', monospace;
+    --font-secondary: 'Roboto Mono', monospace; /* Using mono for everything to match the theme */
+
+    /* Accent Colors */
+    --accent-color-main: #00ff9c;
+    --accent-color-close: #ff5f56;
+    --accent-color-minimize: #ffbd2e;
+    --accent-color-maximize: #27c93f;
+    --accent-color-theme-green: #00ff9c;
+    --accent-color-theme-amber: #ffc400;
+    --accent-color-theme-ice: #79d8ff;
+    
+    /* Log/Status colors based on accents */
+    --accent-color-cyan: var(--accent-color-main); /* Remapping old variables */
+    --accent-color-magenta: var(--accent-color-main);
+    --accent-color-pink: var(--accent-color-main);
+    --accent-color-yellow: var(--accent-color-minimize);
+    --accent-color-red: var(--accent-color-close);
+    --accent-color-green: var(--accent-color-maximize);
+
+    /* Glow Effects */
+    --glow-main: 0 0 5px var(--accent-color-main), 0 0 10px var(--accent-color-main);
+    --glow-text: 0 0 3px var(--accent-color-main);
+    
+    /* Mapping old glow vars to new ones */
+    --glow-cyan: var(--glow-main);
+    --glow-magenta: var(--glow-main);
+    --glow-pink: var(--glow-main);
+    --glow-red: 0 0 8px var(--accent-color-red);
+
+
+    /* Transitions */
+    --transition-fast: all 0.2s ease-in-out;
+
+    /* Bootstrap Overrides */
+    --bs-primary: var(--accent-color-main);
+    --bs-primary-rgb: 0, 255, 156;
+    --bs-body-color: var(--text-color-primary);
+    --bs-body-bg: transparent;
+    --bs-border-color: var(--border-color);
+    --bs-border-radius: .375rem;
+    --bs-emphasis-color: #fff;
+    --bs-secondary-bg: rgba(255, 255, 255, 0.1);
+    --bs-tertiary-bg: rgba(255, 255, 255, 0.05);
+    --bs-heading-color: inherit;
+    --bs-link-color: var(--accent-color-main);
+    --bs-link-hover-color: #fff;
+    --bs-code-color: var(--accent-color-main);
+    --bs-form-control-bg: rgba(0,0,0,0.3);
+    --bs-form-control-color: var(--text-color-primary);
+    --bs-form-control-border-color: var(--border-color);
+    --bs-form-control-focus-border-color: var(--accent-color-main);
+    --bs-form-control-focus-box-shadow: var(--glow-main);
+    --bs-accordion-bg: transparent;
+    --bs-accordion-color: var(--text-color-secondary);
+    --bs-accordion-border-color: var(--border-color);
+    --bs-accordion-button-color: var(--text-color-primary);
+    --bs-accordion-button-active-bg: rgba(0, 255, 156, 0.1);
+    --bs-accordion-button-active-color: var(--text-color-primary);
+    --bs-accordion-button-focus-box-shadow: none;
+    --bs-accordion-icon-color: var(--text-color-secondary);
+    --bs-accordion-icon-active-color: var(--text-color-primary);
+    --bs-nav-pills-link-active-bg: var(--bg-color-medium);
+    --bs-nav-pills-link-active-color: var(--accent-color-main);
+}
+
+body {
+    font-family: var(--font-primary) !important;
+    min-height: 100vh !important;
+    background-color: var(--bg-color-dark) !important;
+    background-image: radial-gradient(circle at center, #0a0a1f 0%, #000 70%) !important;
+    color: var(--text-color-primary) !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 1rem !important;
+    overflow: hidden;
+}
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #fff;
+}
+
+/* Text Selection */
+::selection {
+    background-color: var(--accent-color-main);
+    color: var(--bg-color-dark);
+    text-shadow: none;
+}

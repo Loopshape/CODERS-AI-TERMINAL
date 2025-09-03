@@ -1,0 +1,8 @@
+{
+  "name": "AI System Diagnostics",
+  "description": "A 3D visualization of a futuristic AI system diagnostic interface, created with Three.js.",
+  "prompt": "",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

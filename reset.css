@@ -1,0 +1,14 @@
+*,
+::before,
+*::after {
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+html {
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+}

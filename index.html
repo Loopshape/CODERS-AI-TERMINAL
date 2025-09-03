@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Core Nexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://aistudiocdn.com/three@^0.179.1",
+    "three/": "https://aistudiocdn.com/three@^0.179.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.16.0",
+    "lit/": "https://aistudiocdn.com/lit@^3.3.1/",
+    "lit": "https://aistudiocdn.com/lit@^3.3.1",
+    "lit-element/": "https://aistudiocdn.com/lit-element@^4.2.1/",
+    "lit-element": "https://aistudiocdn.com/lit-element@^4.2.1",
+    "gsap": "https://aistudiocdn.com/gsap@^3.12.5"
+  }
+}
+</script>
+</head>
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <div class="window-controls">
+                <div class="control-btn close"></div>
+                <div class="control-btn minimize"></div>
+                <div class="control-btn maximize"></div>
+            </div>
+            <div class="title-text">AI Core Nexus GUI</div>
+        </div>
+        <div id="visual-panel">
+            <div class="visual-header">SYSTEM CORE VISUALIZER</div>
+            <div class="visual-body">
+                <div class="visual-controls">
+                    <div class="accordion" id="visualControlsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseColorScheme" aria-expanded="true" aria-controls="collapseColorScheme">
+                                    Color Scheme
+                                </button>
+                            </h2>
+                            <div id="collapseColorScheme" class="accordion-collapse collapse show" data-bs-parent="#visualControlsAccordion">
+                                <div class="accordion-body">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="color" value="green" id="colorGreen" checked>
+                                        <label class="form-check-label" for="colorGreen">Matrix Green</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="color" value="amber" id="colorAmber">
+                                        <label class="form-check-label" for="colorAmber">Amber</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="color" value="ice" id="colorIce">
+                                        <label class="form-check-label" for="colorIce">Ice Blue</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnimationSpeed" aria-expanded="true" aria-controls="collapseAnimationSpeed">
+                                    Animation Speed
+                                </button>
+                            </h2>
+                            <div id="collapseAnimationSpeed" class="accordion-collapse collapse show" data-bs-parent="#visualControlsAccordion">
+                                <div class="accordion-body">
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speed" value="0.5" id="speedSlow">
+                                        <label class="form-check-label" for="speedSlow">Slow</label>
+                                    </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speed" value="1" id="speedNormal" checked>
+                                        <label class="form-check-label" for="speedNormal">Normal</label>
+                                    </div>
+                                     <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speed" value="2" id="speedFast">
+                                        <label class="form-check-label" for="speedFast">Fast</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="svg-container">
+                    <svg id="visual-svg" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"></feMergeNode>
+                                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                                </feMerge>
+                            </filter>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 0, 0, 0.05)" stroke-width="1"></path>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)"></rect>
+                        <g id="svg-core-group" filter="url(#glow)" transform="translate(240 150)">
+                            <!-- Central Core -->
+                            <circle class="svg-core-element svg-core-ring" cx="0" cy="0" r="20" />
+                            <circle class="svg-core-element svg-node" cx="0" cy="0" r="5" />
+                        
+                            <!-- Concentric Rings -->
+                            <circle class="svg-core-element svg-core-ring" cx="0" cy="0" r="40" fill="none" stroke-width="1.5" />
+                            <circle class="svg-core-element svg-core-ring" cx="0" cy="0" r="70" fill="none" stroke-width="1" />
+                            <circle class="svg-core-element svg-core-ring" cx="0" cy="0" r="110" fill="none" stroke-width="0.5" />
+                        
+                            <!-- Radiating Circuit Lines -->
+                            <g class="svg-circuit-group">
+                                <path class="svg-core-element svg-circuit-line" d="M 25 0 L 120 0" />
+                                <path class="svg-core-element svg-circuit-line" d="M 17.67 17.67 L 84.85 84.85" />
+                                <path class="svg-core-element svg-circuit-line" d="M 0 25 L 0 120" />
+                                <path class="svg-core-element svg-circuit-line" d="M -17.67 17.67 L -84.85 84.85" />
+                                <path class="svg-core-element svg-circuit-line" d="M -25 0 L -120 0" />
+                                <path class="svg-core-element svg-circuit-line" d="M -17.67 -17.67 L -84.85 -84.85" />
+                                <path class="svg-core-element svg-circuit-line" d="M 0 -25 L 0 -120" />
+                                <path class="svg-core-element svg-circuit-line" d="M 17.67 -17.67 L 84.85 -84.85" />
+                            </g>
+                        
+                            <!-- Decorative Nodes on Rings -->
+                            <g class="svg-node-group">
+                                <circle class="svg-core-element svg-node" cx="70" cy="0" r="3" />
+                                <circle class="svg-core-element svg-node" cx="-70" cy="0" r="3" />
+                                <circle class="svg-core-element svg-node" cx="0" cy="70" r="3" />
+                                <circle class="svg-core-element svg-node" cx="0" cy="-70" r="3" />
+                            </g>
+                        </g>
+                        <polyline id="lightning" points="" fill="none" stroke="var(--accent-color-main)" stroke-width="2" filter="url(#glow)"></polyline>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <aside id="sidebar">
+            <div class="sidebar-header">MODES</div>
+            <div class="nav flex-column nav-pills">
+                <button class="nav-link text-start active" data-mode="gemini">
+                    <span class="icon"><i class="fa-solid fa-brain"></i></span> Gemini Prompt
+                </button>
+                <button class="nav-link text-start" data-mode="file">
+                    <span class="icon"><i class="fa-solid fa-file-lines"></i></span> File Processor
+                </button>
+                <button class="nav-link text-start" data-mode="batch">
+                    <span class="icon"><i class="fa-solid fa-folder-open"></i></span> Batch Processor
+                </button>
+                 <button class="nav-link text-start" data-mode="analyzer">
+                    <span class="icon"><i class="fa-solid fa-calculator"></i></span> Token Analyzer
+                </button>
+                <button class="nav-link text-start" data-mode="status">
+                    <span class="icon"><i class="fa-solid fa-server"></i></span> System Status
+                </button>
+                <button class="nav-link text-start" data-mode="env">
+                    <span class="icon"><i class="fa-solid fa-globe"></i></span> Env Scanner
+                </button>
+                <button class="nav-link text-start" data-mode="pipeline">
+                    <span class="icon"><i class="fa-solid fa-network-wired"></i></span> Data Pipeline
+                </button>
+                <button class="nav-link text-start" data-mode="agi">
+                    <span class="icon"><i class="fa-solid fa-eye"></i></span> AGI Watcher
+                </button>
+                <button class="nav-link text-start" data-mode="visualizer">
+                    <span class="icon"><i class="fa-solid fa-chart-wave"></i></span> Audio Visualizer
+                </button>
+                <button class="nav-link text-start" data-mode="ghosting">
+                    <span class="icon"><i class="fa-solid fa-ghost"></i></span> Ghosting Protocol
+                </button>
+                <button class="nav-link text-start" data-mode="bitcoin">
+                    <span class="icon"><i class="fa-solid fa-bitcoin-sign"></i></span> Bitcoin Entropy
+                </button>
+            </div>
+        </aside>
+        <main id="main-content">
+            <div id="panel-gemini" class="content-panel active">
+                <h2><i class="fa-solid fa-brain me-2"></i>Gemini Prompt Interface</h2>
+                <p>Enter a prompt to interact with the Gemini 2.5 Flash model. The model will stream its response back in real-time.</p>
+                <textarea id="gemini-prompt" class="form-control" placeholder="e.g., Write a short sci-fi story about a sentient spaceship."></textarea>
+                <div id="prompt-complexity-indicator">
+                    <span>Tokens: <span id="prompt-token-count">0</span></span>
+                    <span>Tier: <span id="prompt-processing-tier">local</span></span>
+                </div>
+                <button id="gemini-run" class="btn btn-primary mt-3"><i class="fa-solid fa-bolt me-2"></i>Execute Prompt</button>
+                <div class="response-area">
+                    <h3>Response</h3>
+                    <pre id="gemini-response"></pre>
+                </div>
+            </div>
+            <div id="panel-file" class="content-panel">
+                <h2><i class="fa-solid fa-file-lines me-2"></i>File Processor</h2>
+                <p>Simulates processing a single file through the AI core. A backup is created before processing begins.</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="file-input" class="form-control" placeholder="/path/to/your/file.log">
+                    <button class="btn btn-primary execute-btn" type="button" data-action="file"><i class="fa-solid fa-cogs me-2"></i>Process</button>
+                </div>
+                 <div class="stats-container">
+                    <h3>Processing Statistics</h3>
+                    <div class="stats-chart-container">
+                        <svg class="stats-chart" viewBox="0 0 300 150">
+                            <!-- X-axis labels -->
+                            <text x="50" y="145" class="chart-label">Processed</text>
+                            <text x="150" y="145" class="chart-label">Errors</text>
+                            <text x="250" y="145" class="chart-label">Time (s)</text>
+                            
+                            <!-- Bars -->
+                            <rect class="chart-bar bar-processed" x="30" y="130" width="40" height="0"></rect>
+                            <rect class="chart-bar bar-errors" x="130" y="130" width="40" height="0"></rect>
+                            <rect class="chart-bar bar-time" x="230" y="130" width="40" height="0"></rect>
+                            
+                            <!-- Values -->
+                            <text x="50" y="125" class="chart-value value-processed">0</text>
+                            <text x="150" y="125" class="chart-value value-errors">0</text>
+                            <text x="250" y="125" class="chart-value value-time">0s</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div id="panel-batch" class="content-panel">
+                <h2><i class="fa-solid fa-folder-open me-2"></i>Batch Processor</h2>
+                <p>Simulates batch processing of multiple files matching a specific pattern (e.g., using glob syntax).</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="batch-input" class="form-control" placeholder="*.log, data/**/*.json">
+                    <button class="btn btn-primary execute-btn" type="button" data-action="batch"><i class="fa-solid fa-cogs me-2"></i>Process Batch</button>
+                </div>
+                <div class="stats-container">
+                    <h3>Batch Statistics</h3>
+                    <div class="stats-chart-container">
+                        <svg class="stats-chart" viewBox="0 0 300 150">
+                             <!-- X-axis labels -->
+                            <text x="50" y="145" class="chart-label">Processed</text>
+                            <text x="150" y="145" class="chart-label">Errors</text>
+                            <text x="250" y="145" class="chart-label">Time (s)</text>
+                            
+                            <!-- Bars -->
+                            <rect class="chart-bar bar-processed" x="30" y="130" width="40" height="0"></rect>
+                            <rect class="chart-bar bar-errors" x="130" y="130" width="40" height="0"></rect>
+                            <rect class="chart-bar bar-time" x="230" y="130" width="40" height="0"></rect>
+                            
+                            <!-- Values -->
+                            <text x="50" y="125" class="chart-value value-processed">0</text>
+                            <text x="150" y="125" class="chart-value value-errors">0</text>
+                            <text x="250" y="125" class="chart-value value-time">0s</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div id="panel-analyzer" class="content-panel">
+                <h2><i class="fa-solid fa-calculator me-2"></i>Token Complexity Analyzer</h2>
+                <p>Enter a file pattern to analyze token complexity and determine the optimal processing tier. This is a simulation based on the CodersAGI engine.</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="analyzer-input" class="form-control" placeholder="e.g., /src/**/*.js, *.json" value="*.ts, data/*.json, docs/readme.md">
+                    <button class="btn btn-primary execute-btn" type="button" data-action="analyze-tokens"><i class="fa-solid fa-magnifying-glass-chart me-2"></i>Analyze</button>
+                </div>
+                <div class="response-area" id="analyzer-output-container" style="display: none;">
+                     <h3>Analysis Results</h3>
+                     <pre id="analyzer-output"></pre>
+                </div>
+            </div>
+            <div id="panel-status" class="content-panel">
+                <h2><i class="fa-solid fa-server me-2"></i>System Status</h2>
+                <p>Real-time diagnostics of the AI Core Engine and connected services.</p>
+                <div id="status-grid">
+                    <!-- Status items will be populated by script -->
+                </div>
+            </div>
+            <div id="panel-env" class="content-panel">
+                <h2><i class="fa-solid fa-globe me-2"></i>Environment Scanner</h2>
+                <p>Scans and displays the current (simulated) operating environment variables and system information.</p>
+                <button class="btn btn-primary execute-btn" data-action="env"><i class="fa-solid fa-magnifying-glass me-2"></i>Scan Environment</button>
+                <div class="response-area">
+                    <h3>Scan Results</h3>
+                    <pre id="env-output">Ready to scan environment...</pre>
+                </div>
+            </div>
+            <div id="panel-pipeline" class="content-panel">
+                <h2><i class="fa-solid fa-network-wired me-2"></i>Data Pipeline</h2>
+                 <p>Simulates a data processing pipeline, fetching data from a source and processing it.</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="pipeline-input" class="form-control" placeholder="Enter data source URL...">
+                    <button class="btn btn-primary execute-btn" type="button" data-action="pipeline"><i class="fa-solid fa-play me-2"></i>Run Pipeline</button>
+                </div>
+            </div>
+            <div id="panel-agi" class="content-panel">
+                <h2><i class="fa-solid fa-eye me-2"></i>AGI Watcher</h2>
+                <p>Simulates an autonomous agent watching a folder for changes and processing files automatically.</p>
+                <div class="input-group mb-3">
+                    <input type="text" id="agi-folder" class="form-control" placeholder="/var/log/critical">
+                    <button class="btn btn-primary execute-btn" type="button" data-action="agi"><i class="fa-solid fa-binoculars me-2"></i>Start Watching</button>
+                </div>
+            </div>
+            <div id="panel-visualizer" class="content-panel">
+                 <h2><i class="fa-solid fa-chart-wave me-2"></i>Audio Visualizer</h2>
+                 <p>Engages the system's microphone to create a real-time 3D visualization of ambient audio input.</p>
+                 <div id="visualizer-container">
+                    <gdm-live-audio-visuals-3d></gdm-live-audio-visuals-3d>
+                 </div>
+            </div>
+            <div id="panel-ghosting" class="content-panel">
+                <h2><i class="fa-solid fa-ghost me-2"></i>Ghosting Protocol</h2>
+                <p>Capture a transient "echo" of the system's state using various simulated and live device sensors.</p>
+                <div id="ghosting-container">
+                    <div id="ghosting-controls">
+                        <button id="capture-echo-btn" class="btn btn-primary"><i class="fa-solid fa-satellite-dish me-2"></i>Capture Last Echo</button>
+                        <div class="form-group">
+                            <label for="hold-duration-slider" class="form-label">Echo Hold Duration: <span id="hold-duration-value">2s</span></label>
+                            <input type="range" class="form-range" min="1" max="5" step="0.5" value="2" id="hold-duration-slider">
+                        </div>
+                         <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="use-live-sensors-toggle">
+                            <label class="form-check-label" for="use-live-sensors-toggle">Use Live Sensors</label>
+                        </div>
+                        <div id="echo-analysis-area" class="response-area">
+                            <h3>Echo Analysis</h3>
+                            <pre id="echo-analysis-output"></pre>
+                        </div>
+                    </div>
+                    <div id="ghosting-canvas-container"></div>
+                </div>
+            </div>
+            <div id="panel-bitcoin" class="content-panel">
+                <div class="bitcoin-container">
+                    <header>
+                        <h1>Bitcoin Timestamp Entropy</h1>
+                        <p class="subtitle">Cryptographic Seed Generation from Temporal Data</p>
+                    </header>
+            
+                    <div class="grid">
+                        <div class="card">
+                            <h2>Current Timestamp</h2>
+                            <p class="label">MMDDYYHHMMSS Format</p>
+                            <p id="timestamp" class="value">090325060302</p>
+                        </div>
+                        <div class="card">
+                            <h2>SHA-256 Hash</h2>
+                            <p class="label">Derived from Timestamp</p>
+                            <p id="hash" class="value">5f1d...c3a8</p>
+                        </div>
+                        <div class="card">
+                            <h2>Entropy Value</h2>
+                            <p class="label">64-bit Hexadecimal</p>
+                            <p id="entropy" class="value">0x0F1A3C7E8D9B2A4F</p>
+                        </div>
+                    </div>
+            
+                    <div class="visualization">
+                        <h2>Entropy Visualization</h2>
+                        <canvas id="entropyCanvas"></canvas>
+                        <p class="label">Randomness Amplitude Over Time</p>
+                    </div>
+            
+                    <div class="code-block">
+                        <code>
+                            <span class="comment">// Bitcoin timestamp entropy generation</span><br>
+                            <span class="keyword">function</span> <span class="function">generateEntropy</span>(timestamp) {<br>
+                            &nbsp;&nbsp;<span class="keyword">const</span> hash = sha256(timestamp.toString());<br>
+                            &nbsp;&nbsp;<span class="keyword">const</span> entropy = hash.slice(0, 16); <span class="comment">// 64 bits</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"0x"</span> + entropy.toUpperCase();<br>
+                            }<br><br>
+                            <span class="keyword">function</span> <span class="function">sha256</span>(data) {<br>
+                            &nbsp;&nbsp;<span class="comment">// Cryptographic hash function implementation</span><br>
+                            &nbsp;&nbsp;<span class="keyword">return</span> crypto.createHash(<span class="string">'sha256'</span>).update(data).digest(<span class="string">'hex'</span>);<br>
+                            }
+                        </code>
+                    </div>
+            
+                    <div class="grid">
+                        <div class="card">
+                            <h2>BIP39 Mnemonic</h2>
+                            <p class="label">Generated from Entropy</p>
+                            <p id="mnemonic" class="value">abandon amount liar amount expire adjust cage candy ideas grab sleep</p>
+                        </div>
+                        <div class="card">
+                            <h2>Base58 Encoding</h2>
+                            <p class="label">Bitcoin Address Format</p>
+                            <p id="base58" class="value">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+                        </div>
+                        <div class="card">
+                            <h2>Satoshi Value</h2>
+                            <p class="label">Prime Diffusion Result</p>
+                            <p id="sats" class="value">8²n = <span class="bitcoin-symbol">64 sats</span></p>
+                        </div>
+                    </div>
+            
+                    <div class="footer">
+                        <p>Ollama AI Pipeline · Cryptographic Seed Generation · © 2025</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div id="log-panel">
+            <div class="log-header">
+                <span>SYSTEM LOG</span>
+                <button id="clear-log-btn" class="btn btn-sm btn-outline-danger">Clear</button>
+            </div>
+            <div id="log-content"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script type="module" src="index.js"></script>
+</body>
+</html>

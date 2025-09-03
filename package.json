@@ -1,0 +1,23 @@
+{
+  "name": "ai-system-diagnostics",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.179.1",
+    "@google/genai": "^1.16.0",
+    "lit": "^3.3.1",
+    "lit-element": "^4.2.1",
+    "gsap": "^3.12.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}
