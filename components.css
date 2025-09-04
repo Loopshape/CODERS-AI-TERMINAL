@@ -86,7 +86,7 @@
     opacity: 0.8;
     min-height: 0;
 }
-#visual-svg {
+#core-visualizer-svg {
     width: 100%;
     height: 100%;
 }
@@ -94,6 +94,19 @@
     stroke: var(--accent-color-main);
     fill: rgba(0, 255, 156, 0.1);
     transition: stroke 0.5s, fill 0.5s;
+}
+#core-visualizer-svg.color-green .svg-core-element { stroke: var(--accent-color-theme-green); }
+#core-visualizer-svg.color-green .lightning-stroke { stroke: var(--accent-color-theme-green); }
+#core-visualizer-svg.color-green .grid-path { stroke: rgba(0, 255, 156, 0.2); }
+#core-visualizer-svg.color-amber .svg-core-element { stroke: var(--accent-color-theme-amber); }
+#core-visualizer-svg.color-amber .lightning-stroke { stroke: var(--accent-color-theme-amber); }
+#core-visualizer-svg.color-amber .grid-path { stroke: rgba(255, 196, 0, 0.2); }
+#core-visualizer-svg.color-ice .svg-core-element { stroke: var(--accent-color-theme-ice); }
+#core-visualizer-svg.color-ice .lightning-stroke { stroke: var(--accent-color-theme-ice); }
+#core-visualizer-svg.color-ice .grid-path { stroke: rgba(121, 216, 255, 0.2); }
+
+.grid-rect {
+    fill: rgba(0,0,0,0.1);
 }
 
 /* Sidebar */
@@ -164,6 +177,16 @@ textarea.form-control {
     min-height: 120px;
     resize: vertical;
 }
+.form-control.is-invalid {
+    animation: shake 0.5s ease-in-out;
+}
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
 .form-check-input {
     background-color: transparent;
     border-color: var(--border-color);
@@ -240,6 +263,27 @@ pre {
     color: var(--text-color-primary);
     font-size: 0.9em;
     line-height: 1.6;
+}
+
+/* Gemini Sources */
+#gemini-sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.source-link {
+    font-family: var(--font-primary);
+    font-size: 0.9em;
+    color: var(--accent-color-main);
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.source-link:hover {
+    color: #fff;
+    text-decoration: underline;
 }
 
 /* Stats Chart */
@@ -324,37 +368,87 @@ pre {
 .log-error { color: var(--accent-color-red); }
 
 /* Audio Visualizer Panel */
-#visualizer-container gdm-live-audio-visuals {
-    --gdm-live-audio-visuals-width: 100%;
-    --gdm-live-audio-visuals-height: 300px;
-    display: block;
-    margin: 0 auto;
+#visualizer-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 15px;
 }
+#visualizer-container gdm-live-audio-visuals-3d {
+    flex-grow: 1;
+    display: block;
+    position: relative;
+    border: 1px solid var(--border-color);
+    background: #000;
+    border-radius: 4px;
+    min-height: 150px;
+}
+.waveform-container {
+    height: 80px;
+    border: 1px solid var(--border-color);
+    padding: 5px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    position: relative;
+}
+#waveform-canvas {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+.waveform-label {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    font-size: 0.7em;
+    font-family: var(--font-primary);
+    color: var(--text-color-secondary);
+    letter-spacing: 1px;
+    margin: 0 !important;
+}
+
 
 /* Ghosting Panel Specifics */
 #ghosting-container {
     display: flex;
     gap: 20px;
 }
-#ghosting-canvas-container {
+#ghosting-meters {
     flex-grow: 1;
-    height: 300px;
-    border: 1px solid var(--border-color);
-    background-color: #000;
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
 }
-.echo-particle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 4px;
-    background-color: var(--accent-color-main);
-    border-radius: 50%;
-    box-shadow: var(--glow-main);
-    will-change: transform, opacity;
+.meter-container {
+    text-align: center;
 }
+.meter-svg {
+    width: 100px;
+    height: 50px;
+}
+.meter-bg {
+    fill: none;
+    stroke: var(--border-color);
+    stroke-width: 2;
+    opacity: 0.3;
+}
+.meter-needle {
+    fill: none;
+    stroke: var(--accent-color-main);
+    stroke-width: 2;
+    stroke-linecap: round;
+    transform-origin: center 100%;
+    transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    filter: drop-shadow(var(--glow-text));
+}
+.meter-label {
+    font-family: var(--font-primary);
+    font-size: 0.8em;
+    color: var(--text-color-secondary);
+}
+
 #ghosting-controls {
     width: 250px;
     display: flex;
@@ -414,54 +508,48 @@ pre {
     font-family: var(--font-primary);
 }
 
-.status-item .label {
+.service-name {
     color: var(--text-color-secondary);
     font-size: 0.9em;
 }
 
-.status-item .value {
+.service-status {
     font-weight: bold;
     font-size: 1em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-shadow: 0 0 5px #000;
 }
 
-.status-item .status-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
+.service-status.status-online { color: #000; background: var(--accent-color-green); }
+.service-status.status-degraded { color: #000; background: var(--accent-color-yellow); }
+.service-status.status-error { color: #000; background: var(--accent-color-red); }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(0, 255, 156, 0.4); }
-    70% { box-shadow: 0 0 0 8px rgba(0, 255, 156, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(0, 255, 156, 0); }
-}
-
-.status-dot.green { background-color: var(--accent-color-green); }
-.status-dot.yellow { background-color: var(--accent-color-yellow); }
-.status-dot.red { background-color: var(--accent-color-red); }
-.status-dot.cyan { background-color: var(--accent-color-main); }
-
-.value.status-connected { color: var(--accent-color-green); }
-.value.status-standby { color: var(--accent-color-yellow); }
-.value.status-offline { color: var(--accent-color-red); }
-.value.status-active { color: var(--accent-color-main); }
 
 /* Analyzer Output */
+#analyzer-output-container.loading::after {
+    content: 'Analyzing...';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 25, 47, 0.85);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-primary);
+    color: var(--accent-color-main);
+    z-index: 10;
+}
 #analyzer-output {
     max-height: 400px;
     overflow-y: auto;
 }
 
 /* --- Bitcoin Entropy Panel --- */
-/* This section is intentionally left unchanged to preserve its unique theme */
 #panel-bitcoin {
     font-family: 'Courier New', monospace;
     color: #00ffcc;
     background: linear-gradient(135deg, #0a0a2a 0%, #0d1b2a 100%);
+    border-radius: 4px;
+    padding: 20px;
 }
 
 #panel-bitcoin .bitcoin-container {
@@ -471,7 +559,11 @@ pre {
     background: rgba(13, 27, 42, 0.8);
     box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
 }
-
+#panel-bitcoin .bitcoin-container h2 {
+    font-family: 'Courier New', monospace; /* Override global h2 */
+    color: #ff9e01;
+    text-shadow: none;
+}
 #panel-bitcoin header {
     text-align: center;
     margin-bottom: 30px;
@@ -479,7 +571,7 @@ pre {
     border-bottom: 1px solid #2b7a78;
 }
 
-#panel-bitcoin h1 {
+#panel-bitcoin .bitcoin-title {
     font-family: 'Courier New', monospace;
     font-size: 2.5rem;
     color: #ff9e01;
@@ -487,25 +579,19 @@ pre {
     margin-bottom: 10px;
 }
 
-#panel-bitcoin h2 {
-    font-family: 'Courier New', monospace;
-    color: #ff9e01;
-    text-shadow: none;
-}
-
-#panel-bitcoin .subtitle {
+#panel-bitcoin .bitcoin-subtitle {
     color: #8ac6d1;
     font-size: 1.2rem;
 }
 
-#panel-bitcoin .grid {
+#panel-bitcoin .bitcoin-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
 }
 
-#panel-bitcoin .card {
+#panel-bitcoin .bitcoin-card {
     background: rgba(10, 25, 47, 0.7);
     border: 1px solid #2b7a78;
     border-radius: 8px;
@@ -513,19 +599,19 @@ pre {
     transition: transform 0.3s ease;
 }
 
-#panel-bitcoin .card:hover {
+#panel-bitcoin .bitcoin-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
 }
 
-#panel-bitcoin .card h2 {
+#panel-bitcoin .bitcoin-card h2 {
     margin-bottom: 15px;
     font-size: 1.5rem;
     border-bottom: 1px solid #2b7a78;
     padding-bottom: 8px;
 }
 
-#panel-bitcoin .value {
+#panel-bitcoin .bitcoin-value {
     font-size: 1.5rem;
     font-weight: bold;
     color: #00ffcc;
@@ -534,14 +620,14 @@ pre {
     word-break: break-all;
 }
 
-#panel-bitcoin .label {
+#panel-bitcoin .bitcoin-label {
     color: #8ac6d1;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-#panel-bitcoin .visualization {
+#panel-bitcoin .bitcoin-visualization {
     background: rgba(10, 25, 47, 0.7);
     border-radius: 8px;
     padding: 20px;
@@ -549,43 +635,17 @@ pre {
     border: 1px solid #2b7a78;
 }
 
-#panel-bitcoin .visualization h2 {
+#panel-bitcoin .bitcoin-visualization h2 {
     margin-bottom: 15px;
     text-align: center;
 }
 
-#panel-bitcoin #entropyCanvas {
+#panel-bitcoin #bitcoin-entropy-canvas {
     width: 100%;
     height: 200px;
     background: #0a192f;
     border-radius: 5px;
     margin-bottom: 15px;
-}
-
-#panel-bitcoin .code-block {
-    background: #0a192f;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 15px 0;
-    overflow-x: auto;
-    border-left: 3px solid #ff9e01;
-}
-
-#panel-bitcoin code {
-    color: #8ac6d1;
-    font-family: 'Courier New', monospace;
-}
-
-#panel-bitcoin .comment { color: #5e9e9f; }
-#panel-bitcoin .keyword { color: #ff9e01; }
-#panel-bitcoin .function { color: #00ffcc; }
-#panel-bitcoin .string { color: #8ac6d1; }
-
-#panel-bitcoin .footer {
-    text-align: center;
-    margin-top: 30px;
-    color: #5e9e9f;
-    font-size: 0.9rem;
 }
 
 #panel-bitcoin .bitcoin-symbol {

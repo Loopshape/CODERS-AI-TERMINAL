@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 <div class="svg-container">
-                    <svg id="visual-svg" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid meet">
+                    <svg id="core-visualizer-svg" class="color-green" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid meet">
                         <defs>
                             <filter id="glow">
                                 <feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
@@ -98,11 +98,11 @@
                                     <feMergeNode in="SourceGraphic"></feMergeNode>
                                 </feMerge>
                             </filter>
-                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 0, 0, 0.05)" stroke-width="1"></path>
+                             <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" class="grid-path" stroke-width="0.5"></path>
                             </pattern>
                         </defs>
-                        <rect width="100%" height="100%" fill="url(#grid)"></rect>
+                        <rect width="100%" height="100%" fill="url(#grid)" class="grid-rect"></rect>
                         <g id="svg-core-group" filter="url(#glow)" transform="translate(240 150)">
                             <!-- Central Core -->
                             <circle class="svg-core-element svg-core-ring" cx="0" cy="0" r="20" />
@@ -133,7 +133,7 @@
                                 <circle class="svg-core-element svg-node" cx="0" cy="-70" r="3" />
                             </g>
                         </g>
-                        <polyline id="lightning" points="" fill="none" stroke="var(--accent-color-main)" stroke-width="2" filter="url(#glow)"></polyline>
+                        <polyline id="lightning" points="" fill="none" class="lightning-stroke" stroke-width="2" filter="url(#glow)"></polyline>
                     </svg>
                 </div>
             </div>
@@ -185,10 +185,23 @@
                     <span>Tokens: <span id="prompt-token-count">0</span></span>
                     <span>Tier: <span id="prompt-processing-tier">local</span></span>
                 </div>
-                <button id="gemini-run" class="btn btn-primary mt-3"><i class="fa-solid fa-bolt me-2"></i>Execute Prompt</button>
+                <div class="form-check form-switch my-3">
+                    <input class="form-check-input" type="checkbox" role="switch" id="gemini-search-toggle">
+                    <label class="form-check-label" for="gemini-search-toggle">Enable Google Search Grounding</label>
+                </div>
+                <div class="d-flex align-items-center mt-3 gap-3">
+                    <button id="gemini-run" class="btn btn-primary"><i class="fa-solid fa-bolt me-2"></i>Execute Prompt</button>
+                    <div id="gemini-spinner" class="spinner-border text-primary" role="status" style="display: none;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div class="response-area">
                     <h3>Response</h3>
                     <pre id="gemini-response"></pre>
+                </div>
+                <div id="gemini-sources" class="response-area" style="display: none;">
+                    <h3><i class="fa-solid fa-globe me-2"></i>Grounding Sources</h3>
+                    <div id="gemini-sources-list"></div>
                 </div>
             </div>
             <div id="panel-file" class="content-panel">
@@ -256,7 +269,7 @@
                     <input type="text" id="analyzer-input" class="form-control" placeholder="e.g., /src/**/*.js, *.json" value="*.ts, data/*.json, docs/readme.md">
                     <button class="btn btn-primary execute-btn" type="button" data-action="analyze-tokens"><i class="fa-solid fa-magnifying-glass-chart me-2"></i>Analyze</button>
                 </div>
-                <div class="response-area" id="analyzer-output-container" style="display: none;">
+                <div class="response-area" id="analyzer-output-container">
                      <h3>Analysis Results</h3>
                      <pre id="analyzer-output"></pre>
                 </div>
@@ -298,6 +311,10 @@
                  <p>Engages the system's microphone to create a real-time 3D visualization of ambient audio input.</p>
                  <div id="visualizer-container">
                     <gdm-live-audio-visuals-3d></gdm-live-audio-visuals-3d>
+                    <div class="waveform-container">
+                        <canvas id="waveform-canvas"></canvas>
+                        <p class="waveform-label">LIVE MICROPHONE INPUT</p>
+                    </div>
                  </div>
             </div>
             <div id="panel-ghosting" class="content-panel">
@@ -311,85 +328,63 @@
                             <input type="range" class="form-range" min="1" max="5" step="0.5" value="2" id="hold-duration-slider">
                         </div>
                          <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" id="use-live-sensors-toggle">
-                            <label class="form-check-label" for="use-live-sensors-toggle">Use Live Sensors</label>
+                            <input class="form-check-input" type="checkbox" role="switch" id="ghosting-sensor-toggle">
+                            <label class="form-check-label" for="ghosting-sensor-toggle">Sensor Mode: <span id="sensor-mode-label">Simulated</span></label>
                         </div>
                         <div id="echo-analysis-area" class="response-area">
                             <h3>Echo Analysis</h3>
                             <pre id="echo-analysis-output"></pre>
                         </div>
                     </div>
-                    <div id="ghosting-canvas-container"></div>
+                    <div id="ghosting-meters">
+                        <div class="meter-container">
+                            <svg class="meter-svg" viewBox="0 0 100 50">
+                                <path class="meter-bg" d="M10 50 A 40 40 0 0 1 90 50"></path>
+                                <path class="meter-needle" id="meter-needle-1" d="M50 50 L50 10"></path>
+                            </svg>
+                            <div class="meter-label">Matrix Stability</div>
+                        </div>
+                        <div class="meter-container">
+                            <svg class="meter-svg" viewBox="0 0 100 50">
+                                <path class="meter-bg" d="M10 50 A 40 40 0 0 1 90 50"></path>
+                                <path class="meter-needle" id="meter-needle-2" d="M50 50 L50 10"></path>
+                            </svg>
+                            <div class="meter-label">Signal Resonance</div>
+                        </div>
+                        <div class="meter-container">
+                             <svg class="meter-svg" viewBox="0 0 100 50">
+                                <path class="meter-bg" d="M10 50 A 40 40 0 0 1 90 50"></path>
+                                <path class="meter-needle" id="meter-needle-3" d="M50 50 L50 10"></path>
+                            </svg>
+                            <div class="meter-label">Temporal Flux</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="panel-bitcoin" class="content-panel">
-                <div class="bitcoin-container">
+                 <div class="bitcoin-container">
                     <header>
-                        <h1>Bitcoin Timestamp Entropy</h1>
-                        <p class="subtitle">Cryptographic Seed Generation from Temporal Data</p>
+                        <h1 class="bitcoin-title">Bitcoin Timestamp Entropy</h1>
+                        <p class="bitcoin-subtitle">Cryptographic Seed Generation from Temporal Data</p>
                     </header>
-            
-                    <div class="grid">
-                        <div class="card">
+                    <div class="bitcoin-grid">
+                        <div class="bitcoin-card">
                             <h2>Current Timestamp</h2>
-                            <p class="label">MMDDYYHHMMSS Format</p>
-                            <p id="timestamp" class="value">090325060302</p>
+                            <p class="bitcoin-label">ISO 8601 Format</p>
+                            <p id="bitcoin-timestamp" class="bitcoin-value">--</p>
                         </div>
-                        <div class="card">
-                            <h2>SHA-256 Hash</h2>
-                            <p class="label">Derived from Timestamp</p>
-                            <p id="hash" class="value">5f1d...c3a8</p>
-                        </div>
-                        <div class="card">
-                            <h2>Entropy Value</h2>
-                            <p class="label">64-bit Hexadecimal</p>
-                            <p id="entropy" class="value">0x0F1A3C7E8D9B2A4F</p>
+                         <div class="bitcoin-card">
+                            <h2>BTC Price (USD)</h2>
+                            <p class="bitcoin-label">Live Oracle Price</p>
+                            <p id="btc-price" class="bitcoin-value bitcoin-symbol">$--.--</p>
                         </div>
                     </div>
-            
-                    <div class="visualization">
-                        <h2>Entropy Visualization</h2>
-                        <canvas id="entropyCanvas"></canvas>
-                        <p class="label">Randomness Amplitude Over Time</p>
+                    <div class="bitcoin-visualization">
+                        <h2>Live Entropy Visualization</h2>
+                        <canvas id="bitcoin-entropy-canvas"></canvas>
+                        <p class="bitcoin-label">Visualizing random data points derived from timestamp hashes</p>
                     </div>
-            
-                    <div class="code-block">
-                        <code>
-                            <span class="comment">// Bitcoin timestamp entropy generation</span><br>
-                            <span class="keyword">function</span> <span class="function">generateEntropy</span>(timestamp) {<br>
-                            &nbsp;&nbsp;<span class="keyword">const</span> hash = sha256(timestamp.toString());<br>
-                            &nbsp;&nbsp;<span class="keyword">const</span> entropy = hash.slice(0, 16); <span class="comment">// 64 bits</span><br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"0x"</span> + entropy.toUpperCase();<br>
-                            }<br><br>
-                            <span class="keyword">function</span> <span class="function">sha256</span>(data) {<br>
-                            &nbsp;&nbsp;<span class="comment">// Cryptographic hash function implementation</span><br>
-                            &nbsp;&nbsp;<span class="keyword">return</span> crypto.createHash(<span class="string">'sha256'</span>).update(data).digest(<span class="string">'hex'</span>);<br>
-                            }
-                        </code>
-                    </div>
-            
-                    <div class="grid">
-                        <div class="card">
-                            <h2>BIP39 Mnemonic</h2>
-                            <p class="label">Generated from Entropy</p>
-                            <p id="mnemonic" class="value">abandon amount liar amount expire adjust cage candy ideas grab sleep</p>
-                        </div>
-                        <div class="card">
-                            <h2>Base58 Encoding</h2>
-                            <p class="label">Bitcoin Address Format</p>
-                            <p id="base58" class="value">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
-                        </div>
-                        <div class="card">
-                            <h2>Satoshi Value</h2>
-                            <p class="label">Prime Diffusion Result</p>
-                            <p id="sats" class="value">8²n = <span class="bitcoin-symbol">64 sats</span></p>
-                        </div>
-                    </div>
-            
-                    <div class="footer">
-                        <p>Ollama AI Pipeline · Cryptographic Seed Generation · © 2025</p>
-                    </div>
-                </div>
+                 </div>
             </div>
         </main>
         <div id="log-panel">

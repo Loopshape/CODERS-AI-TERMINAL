@@ -319,9 +319,8 @@ export class GdmLiveAudioVisuals3D extends LitElement {
   }
 
   protected firstUpdated() {
-    // FIX: Corrected property 'shadowRoot' to 'renderRoot' to resolve error "Property 'shadowRoot' does not exist on type 'GdmLiveAudioVisuals3D'".
-    // FIX: Replaced 'renderRoot' with 'shadowRoot' to correctly access the shadow DOM.
-    this.canvas = this.shadowRoot!.querySelector('canvas') as HTMLCanvasElement;
+    // FIX: Property 'shadowRoot' does not exist on type 'GdmLiveAudioVisuals3D'. Use 'renderRoot' instead.
+    this.canvas = this.renderRoot.querySelector('canvas') as HTMLCanvasElement;
     this.init();
   }
 
